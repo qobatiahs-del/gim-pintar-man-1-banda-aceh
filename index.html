@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pasar Pintar — Gim Edukasi Aritmatika Dasar</title>
+    <style>
+        :root {
+            --bg-cream: #FFF8E7;
+            --bg-card: #FFFFFF;
+            --green-primary: #2E8B57;
+            --green-dark: #1F633D;
+            --green-light: #E8F5E9;
+            --orange-accent: #FF8C00;
+            --orange-hover: #E07B00;
+            --orange-light: #FFF3E0;
+            --text-dark: #2C3E50;
+            --text-muted: #5D6D7E;
+            --danger: #E74C3C;
+            --border-radius: 18px;
+            --shadow: 0 10px 25px rgba(46, 139, 87, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-cream);
+            background-image: radial-gradient(#E6DEC8 1.5px, transparent 1.5px);
+            background-size: 24px 24px;
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 960px;
+            background: var(--bg-card);
+            border-radius: 24px;
+            box-shadow: var(--shadow);
+            border: 3px solid #F0E6D2;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Hiasan Tenda Pasar */
+        .awning-bar {
+            height: 18px;
+            background: repeating-linear-gradient(
+                90deg,
+                var(--green-primary),
+                var(--green-primary) 32px,
+                var(--orange-accent) 32px,
+                var(--orange-accent) 64px
+            );
+        }
+
+        /* Pengaturan Layar */
+        .screen {
+            display: none;
+            padding: 28px 32px;
+            animation: fadeIn 0.35s ease;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ================= LAYAR 1: MENU UTAMA ================= */
+        .welcome-box {
+            text-align: center;
+            max-width: 580px;
+            margin: 16px auto;
+        }
+
+        .badge-school {
+            display: inline-block;
+            background: var(--green-light);
+            color: var(--green-primary);
+            font-weight: 700;
+            font-size: 0.85rem;
+            padding: 6px 14px;
+            border-radius: 50px;
+            margin-bottom: 14px;
+            border: 1px solid #C8E6C9;
+        }
+
+        .game-logo {
+            font-size: 3.8rem;
+            margin-bottom: 6px;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+        }
+
+        .welcome-title {
+            font-size: 2.4rem;
+            font-weight: 800;
+            color: var(--green-primary);
+            letter-spacing: -0.5px;
+            margin-bottom: 10px;
+        }
+
+        .welcome-subtitle {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .level-preview {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 26px;
+            text-align: left;
+        }
+
+        .preview-card {
+            background: var(--bg-cream);
+            padding: 14px;
+            border-radius: 14px;
+            border: 1px solid #EADDC4;
+        }
+
+        .preview-card h4 {
+            color: var(--green-dark);
+            font-size: 0.92rem;
+            margin-bottom: 6px;
+        }
+
+        .preview-card p {
+            font-size: 0.84rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-name {
+            width: 100%;
+            max-width: 360px;
+            padding: 14px 20px;
+            font-size: 1.1rem;
+            border: 2.5px solid #D5DBDB;
+            border-radius: 14px;
+            text-align: center;
+            outline: none;
+            transition: all 0.2s;
+            font-weight: 600;
+        }
+
+        .input-name:focus {
+            border-color: var(--green-primary);
+            box-shadow: 0 0 0 4px rgba(46, 139, 87, 0.15);
+        }
+
+        .btn-primary {
+            background: var(--orange-accent);
+            color: white;
+            border: none;
+            padding: 15px 36px;
+            font-size: 1.15rem;
+            font-weight: 700;
+            border-radius: 14px;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #C66900;
+            transition: all 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-primary:hover {
+            background: var(--orange-hover);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #C66900;
+        }
+
+        /* ================= LAYAR 2: ARENA PERMAINAN ================= */
+        .status-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--green-primary);
+            color: white;
+            padding: 14px 22px;
+            border-radius: 16px;
+            margin-bottom: 22px;
+            gap: 12px;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .badge-level {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 0.92rem;
+        }
+
+        .hearts-container {
+            font-size: 1.35rem;
+            letter-spacing: 3px;
+        }
+
+        .score-pill {
+            background: var(--orange-accent);
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-weight: 800;
+        }
+
+        .progress-wrapper {
+            width: 100%;
+            height: 8px;
+            background: #E5E8E8;
+            border-radius: 10px;
+            margin-bottom: 22px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--orange-accent);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        .game-grid {
+            display: grid;
+            grid-template-columns: 1.25fr 1fr;
+            gap: 24px;
+            align-items: stretch;
+        }
+
+        .stall-stage {
+            background: var(--bg-cream);
+            border: 2px solid #EADDC4;
+            border-radius: var(--border-radius);
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .vendor-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 16px;
+            padding-bottom: 14px;
+            border-bottom: 2px dashed #DFD3BC;
+        }
+
+        .vendor-avatar {
+            font-size: 2.8rem;
+            background: white;
+            width: 62px;
+            height: 62px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            border: 2px solid var(--green-primary);
+        }
+
+        .vendor-info h3 {
+            color: var(--green-dark);
+            font-size: 1.1rem;
+        }
+
+        .vendor-info span {
+            font-size: 0.85rem;
+            color: var(--orange-hover);
+            font-weight: 700;
+        }
+
+        .story-bubble {
+            background: white;
+            padding: 18px;
+            border-radius: 14px;
+            border-left: 5px solid var(--green-primary);
+            font-size: 1.08rem;
+            line-height: 1.65;
+            margin-bottom: 18px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.03);
+        }
+
+        .shopping-note {
+            background: #FFFDF7;
+            border: 1.5px dashed #BFC9CA;
+            border-radius: 12px;
+            padding: 14px;
+        }
+
+        .note-title {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-muted);
+            font-weight: 800;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .note-items {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .note-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid #F0EAE0;
+            font-size: 0.95rem;
+        }
+
+        .note-row-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+        }
+
+        .note-row-right {
+            font-weight: 700;
+            color: var(--green-dark);
+        }
+
+        .cashier-panel {
+            background: #F8F9F9;
+            border: 2px solid #E5E8E8;
+            border-radius: var(--border-radius);
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .cashier-title {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .answer-box-wrapper {
+            background: white;
+            border: 2.5px solid var(--green-primary);
+            border-radius: 14px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .currency-prefix {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--green-primary);
+        }
+
+        .input-answer {
+            width: 100%;
+            border: none;
+            outline: none;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        .numpad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .num-btn {
+            background: white;
+            border: 1.5px solid #D5DBDB;
+            border-radius: 10px;
+            padding: 11px;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            cursor: pointer;
+            transition: background 0.1s;
+        }
+
+        .num-btn:hover {
+            background: var(--green-light);
+            border-color: var(--green-primary);
+        }
+
+        .num-btn.clear {
+            background: #FDEDEC;
+            color: var(--danger);
+            border-color: #F5B7B1;
+        }
+
+        .btn-submit {
+            width: 100%;
+            background: var(--green-primary);
+            color: white;
+            border: none;
+            padding: 14px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 4px 0 var(--green-dark);
+            transition: all 0.15s;
+        }
+
+        .btn-submit:hover {
+            background: var(--green-dark);
+        }
+
+        .btn-submit:disabled {
+            background: #95A5A6;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        .feedback-box {
+            display: none;
+            margin-top: 18px;
+            padding: 16px 20px;
+            border-radius: 14px;
+            animation: fadeIn 0.25s ease;
+        }
+
+        .feedback-box.correct {
+            display: block;
+            background: var(--green-light);
+            border: 2px solid var(--green-primary);
+            color: var(--green-dark);
+        }
+
+        .feedback-box.wrong {
+            display: block;
+            background: #FDEDEC;
+            border: 2px solid var(--danger);
+            color: #922B21;
+        }
+
+        .feedback-header {
+            font-weight: 800;
+            font-size: 1.05rem;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feedback-text {
+            font-size: 0.96rem;
+            line-height: 1.55;
+            margin-bottom: 12px;
+        }
+
+        .btn-next {
+            background: var(--orange-accent);
+            color: white;
+            border: none;
+            padding: 10px 22px;
+            font-size: 0.98rem;
+            font-weight: 700;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        /* ================= LAYAR 3: RAPOR BELANJA AKHIR ================= */
+        .report-card {
+            max-width: 580px;
+            margin: 10px auto;
+            background: #FFFDF7;
+            border: 3px solid var(--green-primary);
+            border-radius: 20px;
+            padding: 28px;
+            text-align: center;
+        }
+
+        .trophy-icon {
+            font-size: 4rem;
+            margin-bottom: 8px;
+        }
+
+        .report-title {
+            font-size: 1.9rem;
+            font-weight: 800;
+            color: var(--green-primary);
+            margin-bottom: 4px;
+        }
+
+        .player-summary {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            margin-bottom: 20px;
+        }
+
+        .score-circle {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            background: var(--orange-light);
+            border: 5px solid var(--orange-accent);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 18px auto;
+        }
+
+        .score-number {
+            font-size: 2.3rem;
+            font-weight: 900;
+            color: var(--orange-hover);
+            line-height: 1;
+        }
+
+        .score-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .predicate-badge {
+            display: inline-block;
+            background: var(--green-primary);
+            color: white;
+            padding: 8px 22px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+
+        .report-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            background: white;
+            padding: 14px;
+            border-radius: 14px;
+            border: 1.5px solid #EADDC4;
+            margin-bottom: 24px;
+        }
+
+        .stat-box span {
+            display: block;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+        }
+
+        .stat-box strong {
+            font-size: 1.15rem;
+            color: var(--text-dark);
+        }
+
+        @media (max-width: 768px) {
+            .game-grid {
+                grid-template-columns: 1fr;
+            }
+            .level-preview {
+                grid-template-columns: 1fr;
+            }
+            .screen {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="awning-bar"></div>
+
+    <!-- LAYAR 1: MENU UTAMA -->
+    <div id="screen-menu" class="screen active">
+        <div class="welcome-box">
+            <div class="badge-school">STEM EXPO FATIH FESTIVAL 3.0 • MAN 1 BANDA ACEH</div>
+            <div class="game-logo">🏪🧺</div>
+            <h1 class="welcome-title">PASAR PINTAR</h1>
+            <p class="welcome-subtitle">
+                Selamat datang di permainan edukasi belanja di pasar tradisional! Ayo bantu Ibu berbelanja dengan teliti, hitung uang kembalian, dan selesaikan semua tantangan berhitung.
+            </p>
+
+            <div class="level-preview">
+                <div class="preview-card">
+                    <h4>🥬 Tingkat 1</h4>
+                    <p>Belanja harian: penjumlahan dan pengurangan uang kembalian.</p>
+                </div>
+                <div class="preview-card">
+                    <h4>🍊 Tingkat 2</h4>
+                    <p>Belanja buah dan lauk: perkalian harga satuan barang.</p>
+                </div>
+                <div class="preview-card">
+                    <h4>🍉 Tingkat 3</h4>
+                    <p>Berbagi untuk keluarga: pembagian jumlah barang dan iuran.</p>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <input type="text" id="player-name-input" class="input-name" placeholder="Tuliskan nama lengkap atau panggilanmu..." maxlength="25" autocomplete="off">
+            </div>
+
+            <button class="btn-primary" onclick="mulaiBelanja()">
+                <span>🛒 Mulai Berbelanja</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- LAYAR 2: ARENA PERMAINAN -->
+    <div id="screen-game" class="screen">
+        <div class="status-bar">
+            <div class="status-item">
+                <span>🧒</span>
+                <span id="display-player-name">Pemain</span>
+            </div>
+            <div class="status-item">
+                <span class="badge-level" id="display-level">Tingkat 1: Belanja Harian</span>
+                <span style="font-size: 0.9rem; opacity: 0.95;" id="display-question-num">(Soal 1 dari 6)</span>
+            </div>
+            <div class="status-item">
+                <div class="hearts-container" id="display-hearts">❤️❤️❤️</div>
+            </div>
+            <div class="status-item">
+                <span class="score-pill">Nilai: <span id="display-score">0</span></span>
+            </div>
+        </div>
+
+        <div class="progress-wrapper">
+            <div class="progress-fill" id="progress-fill"></div>
+        </div>
+
+        <div class="game-grid">
+            <!-- Panggung Lapak Pedagang -->
+            <div class="stall-stage">
+                <div>
+                    <div class="vendor-header">
+                        <div class="vendor-avatar" id="vendor-avatar">👩‍🌾</div>
+                        <div class="vendor-info">
+                            <h3 id="vendor-name">Ibu Sari (Pedagang Sayur)</h3>
+                            <span id="question-topic">Penjumlahan dan Pengurangan</span>
+                        </div>
+                    </div>
+
+                    <div class="story-bubble" id="question-story">
+                        Memuat soal belanja...
+                    </div>
+                </div>
+
+                <div class="shopping-note">
+                    <div class="note-title">📝 Catatan Belanja dan Uang Saku</div>
+                    <div class="note-items" id="shopping-items-list">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel Kasir -->
+            <div class="cashier-panel">
+                <div>
+                    <div class="cashier-title">🧮 Mesin Kasir Pintar</div>
+                    <p style="font-size: 0.92rem; color: var(--text-muted); margin-bottom: 12px; line-height: 1.4;">
+                        Tuliskan angka jawabanmu dengan benar (tanpa tanda titik atau koma):
+                    </p>
+
+                    <div class="answer-box-wrapper">
+                        <span class="currency-prefix" id="answer-unit">Rp</span>
+                        <input type="number" id="answer-input" class="input-answer" placeholder="0" autocomplete="off">
+                    </div>
+
+                    <div class="numpad">
+                        <button type="button" class="num-btn" onclick="tambahAngka('1')">1</button>
+                        <button type="button" class="num-btn" onclick="tambahAngka('2')">2</button>
+                        <button type="button" class="num-btn" onclick="tambahAngka('3')">3</button>
+                        <button type="button" class="num-btn" onclick="tambahAngka('4')">4</button>
+                        <button type="button" class="num-btn" onclick="tambahAngka('5')">5</button>
+                        <button type="button" class="num-btn" onclick="tambahAngka('6')">6</button>
+                        <button type="button" class="num-btn" onclick="tambahAngka('7')">7</button>
+                        <button type="button" class="num-btn" onclick="tambahAngka('8')">8</button>
+                        <button type="button" class="num-btn" onclick="tambahAngka('9')">9</button>
+                        <button type="button" class="num-btn clear" onclick="hapusAngka()">Hapus</button>
+                        <button type="button" class="num-btn" onclick="tambahAngka('0')">0</button>
+                        <button type="button" class="num-btn" onclick="tambahAngka('000')">000</button>
+                    </div>
+                </div>
+
+                <div>
+                    <button type="button" id="btn-check" class="btn-submit" onclick="periksaJawaban()">
+                        ✅ Periksa Jawaban
+                    </button>
+
+                    <div id="feedback-box" class="feedback-box">
+                        <div class="feedback-header" id="feedback-header"></div>
+                        <div class="feedback-text" id="feedback-text"></div>
+                        <button type="button" class="btn-next" id="btn-next" onclick="soalBerikutnya()">
+                            Lanjut ke Soal Berikutnya ➡️
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- LAYAR 3: RAPOR BELANJA AKHIR -->
+    <div id="screen-report" class="screen">
+        <div class="report-card">
+            <div class="trophy-icon" id="report-icon">🏆</div>
+            <h2 class="report-title">Laporan Hasil Belanja</h2>
+            <p class="player-summary">Nama Peserta: <strong id="report-player-name">Siswa</strong></p>
+
+            <div class="score-circle">
+                <div class="score-number" id="report-final-score">100</div>
+                <div class="score-label">NILAI AKHIR</div>
+            </div>
+
+            <div class="predicate-badge" id="report-predicate">Juara Pasar Cerdas</div>
+
+            <div class="report-stats">
+                <div class="stat-box">
+                    <span>Jawaban Benar</span>
+                    <strong id="report-correct">6 dari 6</strong>
+                </div>
+                <div class="stat-box">
+                    <span>Sisa Kesempatan</span>
+                    <strong id="report-lives">3 ❤️</strong>
+                </div>
+                <div class="stat-box">
+                    <span>Keterangan</span>
+                    <strong id="report-status">Sangat Baik</strong>
+                </div>
+            </div>
+
+            <button class="btn-primary" onclick="ulangPermainan()">
+                <span>🔄 Bermain Lagi dengan Soal Baru</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Data Komoditas Pasar Tradisional
+    const KOMODITAS = [
+        { nama: "Bayam Segar", ikon: "🥬", satuan: "ikat", harga: [2000, 3000, 3500, 4000] },
+        { nama: "Tempe Kedelai", ikon: "🟫", satuan: "papan", harga: [3000, 4000, 5000, 6000] },
+        { nama: "Tahu Putih", ikon: "⬜", satuan: "bungkus", harga: [4000, 5000, 6000] },
+        { nama: "Telur Ayam", ikon: "🥚", satuan: "pak", harga: [12000, 14000, 15000, 16000] },
+        { nama: "Ikan Nila Segar", ikon: "🐟", satuan: "ekor", harga: [15000, 18000, 20000] },
+        { nama: "Beras Pulen", ikon: "🌾", satuan: "liter", harga: [12000, 13000, 14000] },
+        { nama: "Minyak Goreng", ikon: "🫗", satuan: "kemasan", harga: [14000, 16000, 18000] },
+        { nama: "Cabai Merah", ikon: "🌶️", satuan: "ons", harga: [4000, 5000, 6000] },
+        { nama: "Tomat Merah", ikon: "🍅", satuan: "bungkus", harga: [3000, 4000, 5000] },
+        { nama: "Wortel Segar", ikon: "🥕", satuan: "ikat", harga: [3500, 4500, 5000] }
+    ];
+
+    const BUAH_LAUK = [
+        { nama: "Jeruk Manis", ikon: "🍊", satuan: "buah", harga: [2000, 2500, 3000] },
+        { nama: "Apel Merah", ikon: "🍎", satuan: "buah", harga: [4000, 5000, 6000] },
+        { nama: "Pisang Kepok", ikon: "🍌", satuan: "sisir", harga: [8000, 10000, 12000] },
+        { nama: "Ayam Potong", ikon: "🍗", satuan: "potong", harga: [7000, 8000, 10000] },
+        { nama: "Jagung Manis", ikon: "🌽", satuan: "tongkol", harga: [3000, 4000, 5000] },
+        { nama: "Mangga Harum Manis", ikon: "🥭", satuan: "buah", harga: [5000, 6000, 7000] }
+    ];
+
+    const BAGI_RATA = [
+        { nama: "Buah Rambutan", ikon: "🔴", satuan: "buah", jenis: "jumlah" },
+        { nama: "Buah Duku", ikon: "🟡", satuan: "butir", jenis: "jumlah" },
+        { nama: "Kue Klepon", ikon: "🟢", satuan: "biji", jenis: "jumlah" },
+        { nama: "Gula Pasir", ikon: "🧂", satuan: "paket", jenis: "patungan" },
+        { nama: "Semangka Utuh", ikon: "🍉", satuan: "buah", jenis: "patungan" },
+        { nama: "Buah Melon", ikon: "🍈", satuan: "buah", jenis: "patungan" }
+    ];
+
+    function formatRupiah(angka) {
+        return "Rp" + angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    function pilihAcak(arr) {
+        return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function pilihDuaAcak(arr) {
+        const salinan = [...arr];
+        const idx1 = Math.floor(Math.random() * salinan.length);
+        const item1 = salinan.splice(idx1, 1)[0];
+        const idx2 = Math.floor(Math.random() * salinan.length);
+        const item2 = salinan[idx2];
+        return [item1, item2];
+    }
+
+    // Pembangkit Soal Acak (Dynamic Question Generator)
+    function buatPaketSoal() {
+        const soalList = [];
+
+        // TINGKAT 1: Belanja Harian (Penjumlahan dan Pengurangan Kembalian) - 2 Soal
+        for (let i = 0; i < 2; i++) {
+            const [barang1, barang2] = pilihDuaAcak(KOMODITAS);
+            const h1 = pilihAcak(barang1.harga);
+            const h2 = pilihAcak(barang2.harga);
+            const total = h1 + h2;
+
+            const pecahanUang = [10000, 15000, 20000, 25000, 30000, 50000];
+            const uangValid = pecahanUang.filter(u => u >= total);
+            const uangSaku = uangValid.length > 0 ? pilihAcak(uangValid) : (Math.floor(total / 5000) + 1) * 5000;
+            const kembalian = uangSaku - total;
+
+            soalList.push({
+                level: 1,
+                judulLevel: "Tingkat 1: Belanja Harian",
+                operasi: "Penjumlahan dan Pengurangan",
+                pedagang: "Ibu Sari (Pedagang Sayur dan Sembako)",
+                avatarPedagang: "👩‍🌾",
+                cerita: `Ibu memberimu uang saku sebesar <b>${formatRupiah(uangSaku)}</b>. Kamu membeli <b>1 ${barang1.satuan} ${barang1.nama}</b> seharga ${formatRupiah(h1)} dan <b>1 ${barang2.satuan} ${barang2.nama}</b> seharga ${formatRupiah(h2)}. Berapa rupiah sisa uang kembalianmu?`,
+                items: [
+                    { ikon: barang1.ikon, nama: barang1.nama, detail: `1 ${barang1.satuan} seharga ${formatRupiah(h1)}` },
+                    { ikon: barang2.ikon, nama: barang2.nama, detail: `1 ${barang2.satuan} seharga ${formatRupiah(h2)}` },
+                    { ikon: "💵", nama: "Uang Saku dari Ibu", detail: formatRupiah(uangSaku) }
+                ],
+                satuanJawaban: "Rp",
+                jawaban: kembalian,
+                penjelasan: `Langkah 1: Hitung jumlah harga belanjaan = ${formatRupiah(h1)} + ${formatRupiah(h2)} = ${formatRupiah(total)}.<br>Langkah 2: Hitung uang kembalian = ${formatRupiah(uangSaku)} - ${formatRupiah(total)} = <b>${formatRupiah(kembalian)}</b>.`
+            });
+        }
+
+        // TINGKAT 2: Belanja Buah dan Lauk (Perkalian Bilangan Bulat) - 2 Soal
+        for (let i = 0; i < 2; i++) {
+            const item = pilihAcak(BUAH_LAUK);
+            const qty = Math.floor(Math.random() * 6) + 3; // 3 sampai 8
+            const hargaSatuan = pilihAcak(item.harga);
+            const totalBayar = qty * hargaSatuan;
+
+            soalList.push({
+                level: 2,
+                judulLevel: "Tingkat 2: Belanja Buah dan Lauk",
+                operasi: "Perkalian Bilangan Bulat",
+                pedagang: "Bapak Budi (Pedagang Buah dan Lauk Segar)",
+                avatarPedagang: "👨‍🌾",
+                cerita: `Untuk acara makan bersama di rumah, kamu membeli <b>${qty} ${item.satuan} ${item.nama}</b>. Jika harga 1 ${item.satuan} adalah <b>${formatRupiah(hargaSatuan)}</b>, berapa rupiah total harga yang harus kamu bayar?`,
+                items: [
+                    { ikon: item.ikon, nama: item.nama, detail: `Harga satuan: ${formatRupiah(hargaSatuan)} per ${item.satuan}` },
+                    { ikon: "🧺", nama: "Banyaknya Barang", detail: `${qty} ${item.satuan}` }
+                ],
+                satuanJawaban: "Rp",
+                jawaban: totalBayar,
+                penjelasan: `Total harga yang dibayar = Banyaknya barang × Harga satuan.<br>${qty} × ${formatRupiah(hargaSatuan)} = <b>${formatRupiah(totalBayar)}</b>.`
+            });
+        }
+
+        // TINGKAT 3: Berbagi untuk Keluarga (Pembagian Bulat) - 2 Soal
+        for (let i = 0; i < 2; i++) {
+            const item = pilihAcak(BAGI_RATA);
+            const pembagi = pilihAcak([2, 3, 4, 5]);
+
+            if (item.jenis === "jumlah") {
+                const hasilBagi = Math.floor(Math.random() * 9) + 4; // 4 sampai 12
+                const totalBenda = pembagi * hasilBagi;
+
+                soalList.push({
+                    level: 3,
+                    judulLevel: "Tingkat 3: Berbagi untuk Keluarga",
+                    operasi: "Pembagian Bilangan Bulat",
+                    pedagang: "Kak Rina (Pedagang Buah dan Kue)",
+                    avatarPedagang: "🧕",
+                    cerita: `Kamu membeli sekantong berisi <b>${totalBenda} ${item.satuan} ${item.nama}</b>. Sesampainya di rumah, makanan tersebut dibagikan sama banyak kepada <b>${pembagi} anggota keluarga</b>. Berapa ${item.satuan} yang diterima oleh setiap orang?`,
+                    items: [
+                        { ikon: item.ikon, nama: item.nama, detail: `Jumlah seluruhnya: ${totalBenda} ${item.satuan}` },
+                        { ikon: "👨‍👩‍👧‍👦", nama: "Dibagikan Kepada", detail: `${pembagi} anggota keluarga` }
+                    ],
+                    satuanJawaban: item.satuan,
+                    jawaban: hasilBagi,
+                    penjelasan: `Bagian setiap orang = Jumlah seluruh ${item.nama} ÷ Banyaknya anggota keluarga.<br>${totalBenda} ÷ ${pembagi} = <b>${hasilBagi} ${item.satuan}</b>.`
+                });
+            } else {
+                const patunganPerOrang = pilihAcak([4000, 5000, 6000, 8000, 10000]);
+                const totalHarga = pembagi * patunganPerOrang;
+
+                soalList.push({
+                    level: 3,
+                    judulLevel: "Tingkat 3: Berbagi untuk Keluarga",
+                    operasi: "Pembagian Nominal Uang",
+                    pedagang: "Bapak Joko (Pedagang Grosir Pasar)",
+                    avatarPedagang: "🧔",
+                    cerita: `Kamu membeli <b>1 ${item.satuan} ${item.nama}</b> dengan harga <b>${formatRupiah(totalHarga)}</b>. Biaya belanja tersebut dibayar bersama secara adil oleh <b>${pembagi} orang</b>. Berapa rupiah uang yang harus dibayar oleh setiap orang?`,
+                    items: [
+                        { ikon: item.ikon, nama: item.nama, detail: `Harga keseluruhan: ${formatRupiah(totalHarga)}` },
+                        { ikon: "🤝", nama: "Dibayar Bersama", detail: `${pembagi} orang` }
+                    ],
+                    satuanJawaban: "Rp",
+                    jawaban: patunganPerOrang,
+                    penjelasan: `Uang yang dibayar setiap orang = Harga keseluruhan ÷ Banyaknya orang.<br>${formatRupiah(totalHarga)} ÷ ${pembagi} = <b>${formatRupiah(patunganPerOrang)}</b>.`
+                });
+            }
+        }
+
+        return soalList;
+    }
+
+    // Variabel Status Permainan
+    let daftarSoal = [];
+    let indeksSoal = 0;
+    let nyawa = 3;
+    let jumlahBenar = 0;
+    let namaPemain = "Siswa Pintar";
+    let sudahDijawab = false;
+
+    // Efek Suara Luring (Web Audio API)
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    const audioCtx = AudioContextClass ? new AudioContextClass() : null;
+
+    function mainkanSuara(tipe) {
+        if (!audioCtx) return;
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        const now = audioCtx.currentTime;
+        if (tipe === 'benar') {
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(523.25, now);
+            osc.frequency.setValueAtTime(659.25, now + 0.1);
+            osc.frequency.setValueAtTime(783.99, now + 0.2);
+            gain.gain.setValueAtTime(0.2, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+            osc.start(now);
+            osc.stop(now + 0.4);
+        } else if (tipe === 'salah') {
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(220, now);
+            osc.frequency.linearRampToValueAtTime(150, now + 0.3);
+            gain.gain.setValueAtTime(0.15, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+            osc.start(now);
+            osc.stop(now + 0.35);
+        } else if (tipe === 'klik') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(600, now);
+            gain.gain.setValueAtTime(0.05, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+            osc.start(now);
+            osc.stop(now + 0.05);
+        }
+    }
+
+    function gantiLayar(idLayar) {
+        document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+        document.getElementById(idLayar).classList.add('active');
+    }
+
+    function mulaiBelanja() {
+        mainkanSuara('klik');
+        const inputNama = document.getElementById('player-name-input').value.trim();
+        namaPemain = inputNama !== "" ? inputNama : "Pembeli Cilik";
+
+        indeksSoal = 0;
+        nyawa = 3;
+        jumlahBenar = 0;
+        daftarSoal = buatPaketSoal();
+
+        document.getElementById('display-player-name').textContent = namaPemain;
+        perbaruiStatusBar();
+        tampilkanSoal();
+        gantiLayar('screen-game');
+    }
+
+    function perbaruiStatusBar() {
+        const skorSekarang = Math.round((jumlahBenar / 6) * 100);
+        document.getElementById('display-score').textContent = skorSekarang;
+
+        let ikonHati = "";
+        for (let i = 0; i < 3; i++) {
+            ikonHati += i < nyawa ? "❤️" : "🖤";
+        }
+        document.getElementById('display-hearts').textContent = ikonHati;
+    }
+
+    function tampilkanSoal() {
+        sudahDijawab = false;
+        const soal = daftarSoal[indeksSoal];
+
+        document.getElementById('display-level').textContent = soal.judulLevel;
+        document.getElementById('display-question-num').textContent = `(Soal ${indeksSoal + 1} dari ${daftarSoal.length})`;
+        document.getElementById('progress-fill').style.width = `${(indeksSoal / daftarSoal.length) * 100}%`;
+
+        document.getElementById('vendor-avatar').textContent = soal.avatarPedagang;
+        document.getElementById('vendor-name').textContent = soal.pedagang;
+        document.getElementById('question-topic').textContent = soal.operasi;
+        document.getElementById('question-story').innerHTML = soal.cerita;
+
+        const listEl = document.getElementById('shopping-items-list');
+        listEl.innerHTML = "";
+        soal.items.forEach(item => {
+            const row = document.createElement('div');
+            row.className = 'note-row';
+            row.innerHTML = `
+                <div class="note-row-left">
+                    <span>${item.ikon}</span>
+                    <span>${item.nama}</span>
+                </div>
+                <div class="note-row-right">${item.detail}</div>
+            `;
+            listEl.appendChild(row);
+        });
+
+        document.getElementById('answer-unit').textContent = soal.satuanJawaban;
+        const inputEl = document.getElementById('answer-input');
+        inputEl.value = "";
+        inputEl.disabled = false;
+        inputEl.focus();
+
+        const btnCheck = document.getElementById('btn-check');
+        btnCheck.disabled = false;
+        btnCheck.style.display = 'block';
+
+        const fbBox = document.getElementById('feedback-box');
+        fbBox.className = 'feedback-box';
+    }
+
+    function tambahAngka(digit) {
+        if (sudahDijawab) return;
+        mainkanSuara('klik');
+        const inputEl = document.getElementById('answer-input');
+        inputEl.value = inputEl.value + digit;
+        inputEl.focus();
+    }
+
+    function hapusAngka() {
+        if (sudahDijawab) return;
+        mainkanSuara('klik');
+        const inputEl = document.getElementById('answer-input');
+        inputEl.value = "";
+        inputEl.focus();
+    }
+
+    function periksaJawaban() {
+        if (sudahDijawab) return;
+        const inputEl = document.getElementById('answer-input');
+        const nilaiInput = parseInt(inputEl.value, 10);
+
+        if (isNaN(nilaiInput)) {
+            inputEl.focus();
+            return;
+        }
+
+        sudahDijawab = true;
+        inputEl.disabled = true;
+        document.getElementById('btn-check').style.display = 'none';
+
+        const soal = daftarSoal[indeksSoal];
+        const fbBox = document.getElementById('feedback-box');
+        const fbHeader = document.getElementById('feedback-header');
+        const fbText = document.getElementById('feedback-text');
+        const btnNext = document.getElementById('btn-next');
+
+        if (nilaiInput === soal.jawaban) {
+            mainkanSuara('benar');
+            jumlahBenar++;
+            fbBox.className = 'feedback-box correct';
+            fbHeader.innerHTML = '🎉 Bagus sekali! Jawabanmu sudah tepat.';
+            fbText.innerHTML = soal.penjelasan;
+        } else {
+            mainkanSuara('salah');
+            nyawa--;
+            fbBox.className = 'feedback-box wrong';
+            fbHeader.innerHTML = '❌ Jawabanmu belum tepat. Mari kita pelajari cara menghitungnya:';
+            fbText.innerHTML = soal.penjelasan;
+        }
+
+        perbaruiStatusBar();
+
+        if (nyawa <= 0 || indeksSoal === daftarSoal.length - 1) {
+            btnNext.textContent = '📊 Lihat Laporan Hasil Belanja';
+        } else {
+            btnNext.textContent = 'Lanjut ke Soal Berikutnya ➡️';
+        }
+    }
+
+    function soalBerikutnya() {
+        mainkanSuara('klik');
+        if (nyawa <= 0 || indeksSoal >= daftarSoal.length - 1) {
+            tampilkanRaporAkhir();
+        } else {
+            indeksSoal++;
+            tampilkanSoal();
+        }
+    }
+
+    function tampilkanRaporAkhir() {
+        document.getElementById('progress-fill').style.width = '100%';
+        const skorAkhir = Math.round((jumlahBenar / daftarSoal.length) * 100);
+
+        document.getElementById('report-player-name').textContent = namaPemain;
+        document.getElementById('report-final-score').textContent = skorAkhir;
+        document.getElementById('report-correct').textContent = `${jumlahBenar} dari ${daftarSoal.length}`;
+        document.getElementById('report-lives').textContent = `${nyawa} ❤️`;
+
+        const predikatEl = document.getElementById('report-predicate');
+        const iconEl = document.getElementById('report-icon');
+        const statusEl = document.getElementById('report-status');
+
+        if (nyawa <= 0) {
+            iconEl.textContent = '💪';
+            predikatEl.textContent = 'Pembeli Pantang Menyerah';
+            predikatEl.style.background = '#E67E22';
+            statusEl.textContent = 'Perlu Berlatih Lagi';
+        } else if (skorAkhir >= 80) {
+            iconEl.textContent = '🏆';
+            predikatEl.textContent = 'Juara Pasar Cerdas';
+            predikatEl.style.background = '#2E8B57';
+            statusEl.textContent = 'Sangat Baik';
+        } else if (skorAkhir >= 60) {
+            iconEl.textContent = '🌟';
+            predikatEl.textContent = 'Asisten Belanja Teliti';
+            predikatEl.style.background = '#2980B9';
+            statusEl.textContent = 'Baik';
+        } else {
+            iconEl.textContent = '📚';
+            predikatEl.textContent = 'Siswa Rajin Belajar';
+            predikatEl.style.background = '#8E44AD';
+            statusEl.textContent = 'Cukup';
+        }
+
+        gantiLayar('screen-report');
+    }
+
+    function ulangPermainan() {
+        mulaiBelanja();
+    }
+
+    document.getElementById('player-name-input').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') mulaiBelanja();
+    });
+
+    document.getElementById('answer-input').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            if (!sudahDijawab) {
+                periksaJawaban();
+            } else {
+                soalBerikutnya();
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
